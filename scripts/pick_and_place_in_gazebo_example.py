@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright 2019 RT Corporation
@@ -44,18 +44,22 @@ def yaw_of(object_orientation):
 def main():
     global gazebo_model_states
 
-    OBJECT_NAME = "wood_cube_5cm"   # 掴むオブジェクトの名前
+    OBJECT_NAME = ["wood_cube_5cm","wood_cube_5cm2","wood_cube_5cm3","wood_cube_5cm4", "wood_cube_5cm","wood_cube_5cm2","wood_cube_5cm3","wood_cube_5cm4"]
     GRIPPER_OPEN = 1.2              # 掴む時のハンド開閉角度
     GRIPPER_CLOSE = 0.42            # 設置時のハンド開閉角度
     APPROACH_Z = 0.15               # 接近時のハンドの高さ
     LEAVE_Z = 0.20                  # 離れる時のハンドの高さ
     PICK_Z = 0.12                   # 掴む時のハンドの高さ
     PLACE_POSITIONS = [             # オブジェクトの設置位置 (ランダムに設置する)
-            Point(0.4, 0.0, 0.0),
+            Point(0.4, -0.2, 0.0),
             Point(0.0, 0.3, 0.0),
             Point(0.0, -0.3, 0.0),
             Point(0.2, 0.2, 0.0),
-            Point(0.2, -0.2, 0.0)]
+            Point(0.4, 0.0, 0.0),
+            Point(0.3, 0.0, 0.0),
+            Point(0.4, 0.1, 0.0),
+            Point(0.3, 0.1, 0.0)]
+    i = 0
 
     sub_model_states = rospy.Subscriber("gazebo/model_states", ModelStates, callback, queue_size=1)
 
@@ -69,7 +73,7 @@ def main():
 
     rospy.sleep(1.0)
 
-    while True:
+    for cube in OBJECT_NAME:
         # 何かを掴んでいた時のためにハンドを開く
         gripper_goal.command.position = GRIPPER_OPEN
         gripper.send_goal(gripper_goal)
@@ -88,8 +92,8 @@ def main():
         print("Start")
 
         # オブジェクトがgazebo上に存在すれば、pick_and_placeを実行する
-        if OBJECT_NAME in gazebo_model_states.name:
-            object_index = gazebo_model_states.name.index(OBJECT_NAME)
+        if cube in gazebo_model_states.name:
+            object_index = gazebo_model_states.name.index(cube)
             # オブジェクトの姿勢を取得
             object_position = gazebo_model_states.pose[object_index].position
             object_orientation = gazebo_model_states.pose[object_index].orientation
@@ -131,7 +135,7 @@ def main():
             rospy.sleep(1.0)
             
             # 設置位置に移動する
-            place_position = random.choice(PLACE_POSITIONS) # 設置位置をランダムに選択する
+            place_position = PLACE_POSITIONS[i] # 設置位置をランダムに選択する
             target_pose.position.x = place_position.x
             target_pose.position.y = place_position.y
             q = quaternion_from_euler(-math.pi, 0.0, -math.pi/2.0)
@@ -172,6 +176,7 @@ def main():
             rospy.sleep(1.0)
 
             print("Done")
+            i += 1
 
         else:
             print("No objects")
