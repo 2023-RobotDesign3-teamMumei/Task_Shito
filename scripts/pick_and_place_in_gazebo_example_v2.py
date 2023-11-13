@@ -44,21 +44,31 @@ def yaw_of(object_orientation):
 def main():
     global gazebo_model_states
 
-    OBJECT_NAME = ["wood_cube_5cm","wood_cube_5cm2","wood_cube_5cm3","wood_cube_5cm4", "wood_cube_5cm","wood_cube_5cm2","wood_cube_5cm3","wood_cube_5cm4"]
-    GRIPPER_OPEN = 1.0              # 掴む時のハンド開閉角度
-    GRIPPER_CLOSE = 0.42            # 設置時のハンド開閉角度
-    APPROACH_Z = 0.15               # 接近時のハンドの高さ
-    LEAVE_Z = 0.20                  # 離れる時のハンドの高さ
+    OBJECT_NAME = ["cube30_1","cube30_2","cube30_3","cube30_4","cube30_5","cube30_6","cube30_7","cube30_8","cube30_9","cube30_1","cube30_2","cube30_3","cube30_4","cube30_5","cube30_6","cube30_7","cube30_8","cube30_9"]
+    GRIPPER_OPEN = 0.5              # 掴む時のハンド開閉角度
+    GRIPPER_CLOSE = 0.23            # 設置時のハンド開閉角度
+    APPROACH_Z = 0.20               # 接近時のハンドの高さ
+    LEAVE_Z = 0.22                  # 離れる時のハンドの高さ
     PICK_Z = 0.12                   # 掴む時のハンドの高さ
     PLACE_POSITIONS = [             # オブジェクトの設置位置
-            Point(0.4, -0.2, 0.0),
+            Point(0.3, -0.2, 0.0),
             Point(0.0, 0.3, 0.0),
             Point(0.0, -0.3, 0.0),
             Point(0.2, 0.2, 0.0),
-            Point(0.4, 0.0, 0.0),
-            Point(0.3, 0.0, 0.0),
-            Point(0.4, 0.1, 0.0),
-            Point(0.3, 0.1, 0.0)]
+            Point(0.2, -0.3, 0.0),
+            Point(0.1, -0.4, 0.0),
+            Point(0.4, 0.2, 0.0),
+            Point(0.3, 0.3, 0.0),
+            Point(0.3, -0.3, 0.0),
+            Point(0.45, -0.1, 0.0),
+            Point(0.45, 0.0, 0.0),
+            Point(0.45, 0.1, 0.0),
+            Point(0.35, -0.1, 0.0),
+            Point(0.35, 0.0, 0.0),
+            Point(0.35, 0.1, 0.0),
+            Point(0.25, -0.1, 0.0),
+            Point(0.25, 0.0, 0.0),
+            Point(0.25, 0.1, 0.0)]
     i = 0
     flag = True
 
@@ -75,6 +85,7 @@ def main():
     rospy.sleep(1.0)
 
     while True:
+        flag = True
         # 何かを掴んでいた時のためにハンドを開く
         gripper_goal.command.position = GRIPPER_OPEN
         gripper.send_goal(gripper_goal)
@@ -92,7 +103,7 @@ def main():
         rospy.sleep(sleep_time)
         print("Start")
         
-        if i < 8:
+        if i < 18:
             cube = OBJECT_NAME[i]
 
         # オブジェクトがgazebo上に存在すれば、pick_and_placeを実行する
@@ -189,6 +200,13 @@ def main():
             print("Done")
             if flag == True:
                 i += 1
+
+            print(i)
+
+
+            if i > 17:
+                print("Finish")
+                break
 
         else:
             print("No objects")
